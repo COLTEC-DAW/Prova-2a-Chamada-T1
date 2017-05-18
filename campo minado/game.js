@@ -1,3 +1,84 @@
+var estado=false;
+var mina;
+var minamarcada = [];
+var posx, posy;
+var campominado;
+var str;
+
+
+for(var c=1;c<=16;c++){
+            minamarcada[c] = null;
+}
+
+function comecar(){
+    estado = true; 
+    campominado = new CampoMinado();
+    //alert("oi");
+    document.getElementById("start").innerHTML=("Clique nas minas:");
+}
+function recomecar(){
+     for(var i=0;i<=15;i++){
+             str = i.toString();
+             //alert(str);
+             document.getElementById(str).innerHTML=("-"); //volta a tabela para o inicio
+     }
+     document.getElementById("start").innerHTML=("  ");
+     document.getElementById("vencedor").innerHTML=("  ");
+     document.getElementById("j1").innerHTML=("  ");
+}
+
+$(document).ready(function($) {
+    $("td").click(function(){ //quando clicar no td da tabela
+        if(estado){ //ja clicou para comecar
+            mina = event.target.id; //pega o id do td
+           
+            //PEGA AS POSICOES 
+            if(mina>=0 && mina<=3){ //linha 1
+                posx = 0;
+                posy = mina;
+            }
+
+            else if(mina>=4 && mina<=7){ //linha 2
+                posx = 1;
+                posy = mina-4;
+            }
+
+            else if(mina>=8 && mina<=11){ //linha 3
+                posx = 2;
+                posy = mina-8;
+            }
+
+            else if(mina>=12 && mina<=15){ //linha 3
+                posx = 3;
+                posy = mina-12;
+            }
+
+            console.log(posx);
+
+            console.log(posy);
+
+            //joga bacana
+            campominado.cellClicked(posx,posy);
+
+            //para mudar o campo na aparencia ao clicar
+                if(campominado.checkCell(posx,posy)==-1){
+                    $(this).text("Bomb"); // é bomba, muda texto
+
+                } else{
+
+                    $(this).text(campominado.checkCell(posx,posy)); //coloca o numero de minas ao redor
+                }
+
+
+
+
+        }
+
+
+    });
+});
+
+
 /**
  * Construtor do campo minado
  */
@@ -84,19 +165,27 @@ CampoMinado.prototype.cellClicked = function(x, y) {
 
     // se nao tiver pisado em mina
     if(this.mineField[x][y] != -1) {
-        safeCount++;
+        this.safeCount++;
 
-        if(safeCount == safeMax) {
+        if(this.safeCount == this.safeMax) {
             this.isWinner = true;
-            this.setMessage("Parabéns, vc ganhou!!");
+            //this.setMessage("Parabéns, vc ganhou!!");
+            document.getElementById("vencedor").innerHTML=(" Você ganhou! ");
         } else {
-            this.setMessage("Faltam " + (safeMax - safeCount) + " minas");
+            document.getElementById("j1").innerHTML=("Faltam " + (this.safeMax - this.safeCount) + " minas");
+            //this.setMessage();
         }
     } else {
         this.isDead = false;
-        this.setMessage("MORREU!!!");
+        //this.setMessage("MORREU!!!");
+        document.getElementById("vencedor").innerHTML=(" Morreu!!!");
+        estado = false; //jogo acabou
+       
+
     }
 }
+
+
 
 /**
  * Atualiza tabuleiro imprimindo-o para usuário
@@ -111,8 +200,15 @@ CampoMinado.prototype.atualizaTabuleiro = function() {
 
             line += cell + " ";           
         }
-        console.log(line);
+      //  console.log(line);
     }
+
+    //parte grafica
+    /*for(i=1;i<=16;i++){
+         document.getElementById(i).innerHTML=("-"); //volta a tabela para o inicio
+         document.getElementById("start").innerHTML=("");
+         document.getElementById("vencedor").innerHTML=("");
+    }*/
 }
 
 /**
